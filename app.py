@@ -89,7 +89,7 @@ def update_graph(selected_countries, start_date, end_date):
             name=country
         ))
 
-        # >>> Small label for the last value of each country <<<
+        # Last value annotation (small label)
         last_date = dff.index[-1]
         last_value = dff[country].iloc[-1]
         fig.add_annotation(
@@ -102,24 +102,23 @@ def update_graph(selected_countries, start_date, end_date):
             font=dict(color="black", size=10)
         )
 
-    # Layout with source note
+    # Add source note separately
+    fig.add_annotation(
+        text="Source: Central Bank of Dominican Republic",
+        xref="paper",
+        yref="paper",
+        x=0,
+        y=-0.15,
+        showarrow=False,
+        font=dict(size=9, color="gray"),
+        align="left"
+    )
+
     fig.update_layout(
         title="EMBI Spread - Selected Countries",
         xaxis_title="Date",
         yaxis_title="Spread (basis points)",
-        hovermode="x unified",
-        annotations=[
-            dict(
-                text="Source: Central Bank of Dominican Republic",
-                xref="paper",
-                yref="paper",
-                x=0,
-                y=-0.15,
-                showarrow=False,
-                font=dict(size=9, color="gray"),
-                align="left"
-            )
-        ]
+        hovermode="x unified"
     )
     return fig
 
