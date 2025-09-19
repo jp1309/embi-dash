@@ -82,29 +82,31 @@ def update_graph(selected_countries, start_date, end_date):
 
     fig = go.Figure()
     for country in selected_countries:
-        fig.add_trace(go.Scatter(
+        trace = go.Scatter(
             x=dff.index,
             y=dff[country],
             mode="lines",
             name=country
-        ))
+        )
+        fig.add_trace(trace)
 
-        # Last value annotation (small label)
+        # Last value annotation in same color as the line
         last_date = dff.index[-1]
         last_value = dff[country].iloc[-1]
+        line_color = trace.line.color  # get color assigned to this trace
         fig.add_annotation(
             x=last_date,
             y=last_value,
-            text=f"{last_value}",
+            text=f"{last_value:,}",  # formatted with thousands separator
             showarrow=False,
             xanchor="left",
             yanchor="middle",
-            font=dict(color="black", size=10)
+            font=dict(color=line_color, size=10)
         )
 
-    # Add source note separately
+    # Add source note separately (italic style)
     fig.add_annotation(
-        text="Source: Central Bank of Dominican Republic",
+        text="<i>Source: Central Bank of Dominican Republic</i>",
         xref="paper",
         yref="paper",
         x=0,
@@ -114,11 +116,15 @@ def update_graph(selected_countries, start_date, end_date):
         align="left"
     )
 
+    # Layout with white background and light gray grid
     fig.update_layout(
         title="EMBI Spread - Selected Countries",
         xaxis_title="Date",
         yaxis_title="Spread (basis points)",
-        hovermode="x unified"
+        hovermode="x unified",
+        plot_bgcolor="white",
+        xaxis=dict(showgrid=True, gridcolor="lightgray"),
+        yaxis=dict(showgrid=True, gridcolor="lightgray")
     )
     return fig
 
