@@ -89,7 +89,7 @@ def update_graph(selected_countries, start_date, end_date):
             name=country
         ))
 
-        # Last value annotation
+        # >>> Small label for the last value of each country <<<
         last_date = dff.index[-1]
         last_value = dff[country].iloc[-1]
         fig.add_annotation(
@@ -129,4 +129,3 @@ def update_graph(selected_countries, start_date, end_date):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
     app.run_server(host="0.0.0.0", port=port, debug=False)
-
