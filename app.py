@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import plotly.graph_objs as go
 from dash import Dash, dcc, html, Input, Output
+import plotly.colors as pc
 
 # ======================
 # 1. Load and prepare data from the web
@@ -81,36 +82,53 @@ def update_graph(selected_countries, start_date, end_date):
     dff = df.loc[start_date:end_date, selected_countries]
 
     fig = go.Figure()
+    color_palette = pc.qualitative.Plotly  # default Plotly palette
+    color_map = {country: color_palette[i % len(color_palette)] for i, country in enumerate(selected_countries)}
+
     for country in selected_countries:
-        trace = go.Scatter(
+        line_color = color_map[country]
+
+        # Add line trace with fixed color
+        fig.add_trace(go.Scatter(
             x=dff.index,
             y=dff[country],
             mode="lines",
-            name=country
-        )
-        fig.add_trace(trace)
+            name=country,
+            line=dict(color=line_color)
+        ))
 
-        # Last value annotation in same color as the line
+        # Last value annotation in same color
         last_date = dff.index[-1]
         last_value = dff[country].iloc[-1]
-        line_color = trace.line.color  # get color assigned to this trace
         fig.add_annotation(
             x=last_date,
             y=last_value,
-            text=f"{last_value:,}",  # formatted with thousands separator
+            text=f"{last_value:,}",
             showarrow=False,
             xanchor="left",
             yanchor="middle",
             font=dict(color=line_color, size=10)
         )
 
-    # Add source note separately (italic style)
+    # Add source note
     fig.add_annotation(
         text="<i>Source: Central Bank of Dominican Republic</i>",
         xref="paper",
         yref="paper",
         x=0,
         y=-0.15,
+        showarrow=False,
+        font=dict(size=9, color="gray"),
+        align="left"
+    )
+
+    # Add author note
+    fig.add_annotation(
+        text="<i>Author: Juan-Pablo Erraez</i>",
+        xref="paper",
+        yref="paper",
+        x=0,
+        y=-0.22,  # a bit below the source
         showarrow=False,
         font=dict(size=9, color="gray"),
         align="left"
